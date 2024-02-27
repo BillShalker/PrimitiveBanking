@@ -1,0 +1,18 @@
+{% extends 'banking/base.html' %}
+
+{% block title %}My Account{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">My Account Information</h5>
+            <p><strong>First Name:</strong> {{ auth_user.first_name }}</p>
+            <p><strong>Last Name:</strong> {{ auth_user.last_name }}</p>
+            <p><strong>Email:</strong> {{ auth_user.email }}</p>
+            <p><strong>Balance:</strong> {{ account.balance }} $</p>
+            <!-- Другие данные вашего пользователя, если они есть -->
+        </div>
+    </div>
+</div>
+{% endblock %}

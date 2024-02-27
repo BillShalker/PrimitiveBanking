@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'banking/base.html' %}
+{% block title %}Success{% endblock %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Account Created Successfully</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-center">Your account has been successfully created.</p>
+                        <p class="text-center">You can now <a href="{% url 'login' %}">login</a> to access your account.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
