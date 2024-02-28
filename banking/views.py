@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import CreateAccountForm, LoginForm
+from .forms import CreateAccountForm, LoginForm, PaymentForm
+from django.db import transaction, connection
 from .models import Account, User
 
 
@@ -10,6 +11,8 @@ def home(request):
 
 
 def logining(request):
+    if request.user.is_authenticated:
+        return redirect('cabinet')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -35,14 +38,18 @@ def create_account(request):
                 messages.error(request, 'User with this email already exists.')
                 return render(request, 'banking/create_account.html', {'form': form})
             # Создаем пользователя
-            user = User.objects.create_user(username=form.cleaned_data['email'].lower(), email=form.cleaned_data['email'],
-                                            password=form.cleaned_data['password'])
+            else:
+                user = User.objects.create_user(username=form.cleaned_data['email'].lower(),
+                                                email=form.cleaned_data['email'],
+                                                password=form.cleaned_data['password'],
+                                                first_name=form.cleaned_data['first_name'],
+                                                last_name=form.cleaned_data['last_name'])
 
-            # Создаем запись в таблице Account
-            account = Account.objects.create(user=user)
+                # Создаем запись в таблице Account
+                account = Account.objects.create(user=user)
 
-            # Перенаправляем на страницу успеха
-            return redirect('success_account')
+                # Перенаправляем на страницу успеха
+                return redirect('success_account')
         else:
             messages.error(request, 'Invalid data.')
     return render(request, 'banking/create_account.html')
@@ -53,6 +60,8 @@ def success_account(request):
 
 
 def cabinet(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     # Получаем объект пользователя из запроса
     auth_user = request.user
 
@@ -64,3 +73,24 @@ def cabinet(request):
 
     # Передаем информацию об аккаунте в контекст шаблона
     return render(request, 'banking/cabinet.html', {'auth_user': auth_user, 'account': account})
+
+
+@transaction.atomic
+def transfer(request):
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            recipient = form.cleaned_data['email']
+            amount = form.cleaned_data['amount']
+            if User.objects.filter(username=recipient).exists():
+                account = Account.objects.get(user__username=recipient)
+                account.balance += amount
+                account.save()
+                return redirect('success_transfer')
+            else:
+                messages.error(request, 'Account not found.')
+    return render(request, 'banking/transfer.html')
+
+
+def success_transfer(request):
+    return render(request, 'banking/success_transfer.html')
