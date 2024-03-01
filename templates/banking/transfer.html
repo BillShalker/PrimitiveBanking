@@ -3,11 +3,16 @@
 {% block title %}Transfer Money{% endblock %}
 
 {% block content %}
+    {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
     <div class="container mt-5">
-        <div class="card">
-            <div class="card-body">
+        <div class="card" style="background-color: rgba(255, 255, 255, 0.7);">
+            <div class="card-body" >
                 <h5 class="card-title">Transfer Money</h5>
-                <form method="post">
+                <form method="post" >
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="recipient_account">Recipient Email:</label>

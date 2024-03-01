@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CreateAccountForm, LoginForm, PaymentForm
 from django.db import transaction, connection
-from .models import Account, User
+from .models import Account, User, Transaction
 
 
 def home(request):
@@ -70,9 +70,11 @@ def cabinet(request):
         account = Account.objects.get(user=auth_user)
     except Account.DoesNotExist:
         account = None
+    transactions = Transaction.objects.filter(from_account=account).all()
 
     # Передаем информацию об аккаунте в контекст шаблона
-    return render(request, 'banking/cabinet.html', {'auth_user': auth_user, 'account': account})
+    return render(request, 'banking/cabinet.html',
+                  {'auth_user': auth_user, 'account': account, 'transactions': transactions})
 
 
 @transaction.atomic
@@ -83,10 +85,18 @@ def transfer(request):
             recipient = form.cleaned_data['email']
             amount = form.cleaned_data['amount']
             if User.objects.filter(username=recipient).exists():
-                account = Account.objects.get(user__username=recipient)
-                account.balance += amount
-                account.save()
-                return redirect('success_transfer')
+                # проверяем есть ли деньги на счету у переводящего
+                if amount > request.user.account.balance:
+                    messages.error(request, 'Insufficient funds.')
+                    return redirect('transfer')
+                else:
+                    request.user.account.balance -= amount
+                    request.user.account.save()
+                    account = Account.objects.get(user__username=recipient)
+                    account.balance += amount
+                    account.save()
+                    Transaction.objects.create(from_account=request.user.account, to_account=account, amount=amount)
+                    return redirect('success_transfer')
             else:
                 messages.error(request, 'Account not found.')
     return render(request, 'banking/transfer.html')
@@ -94,3 +104,8 @@ def transfer(request):
 
 def success_transfer(request):
     return render(request, 'banking/success_transfer.html')
+
+
+def logouting(request):
+    logout(request)
+    return render(request, 'banking/home.html')
