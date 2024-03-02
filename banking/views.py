@@ -7,7 +7,8 @@ from .models import Account, User, Transaction
 
 
 def home(request):
-    return render(request, 'banking/home.html')
+    isauth = request.user.is_authenticated
+    return render(request, 'banking/home.html', {'isauth': isauth})
 
 
 def logining(request):
@@ -70,8 +71,7 @@ def cabinet(request):
         account = Account.objects.get(user=auth_user)
     except Account.DoesNotExist:
         account = None
-    transactions = Transaction.objects.filter(from_account=account).all()
-
+    transactions = Transaction.objects.filter(from_account=account).all()[::-1]
     # Передаем информацию об аккаунте в контекст шаблона
     return render(request, 'banking/cabinet.html',
                   {'auth_user': auth_user, 'account': account, 'transactions': transactions})

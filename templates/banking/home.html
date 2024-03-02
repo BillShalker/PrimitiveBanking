@@ -4,8 +4,15 @@
         <h1 class="display-4">Welcome to My Online Bank!</h1>
         <p class="lead">We are glad to see you in our bank system.</p>
         <hr class="my-4">
-        <p>Log in to your cabinet.</p>
-        <a class="btn btn-primary btn-lg" href={% url "login" %} role="button">Log in</a>
-        <a class="btn btn-primary btn-lg" href={% url "create_account" %} role="button">Create acount</a>
+        {% if not isauth %}
+            <p>Log in to your cabinet.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Log in</a>
+            <a class="btn btn-primary btn-lg" href="{% url 'create_account' %}" role="button">Create account</a>
+        {% else %}
+            <p>Welcome, we are glad to see you here again!</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'cabinet' %}" role="button">Cabinet</a>
+
+        {% endif %}
+
     </div>
 {% endblock %}

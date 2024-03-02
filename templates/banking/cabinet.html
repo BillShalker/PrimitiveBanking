@@ -17,13 +17,12 @@
                 {% csrf_token %}
                 <a class="btn btn-primary btn-lg" href={% url "transfer" %} role="button">Transfer money</a>
                 <a class="btn btn-primary btn-lg" href={% url "logout" %} role="button">Log Out</a>
-
             </div>
         </div>
     <div class="card" style="background-color: rgba(255, 255, 255, 0.5);">
-    <div class="card-body">
-        <table class="table table-striped"> <!-- Добавлен класс для стилизации таблицы -->
-            <thead class="thead-light"> <!-- Добавлен класс для стилизации заголовка таблицы -->
+    <div class="card-body" >
+        <table class="table table-striped" > <!-- Добавлен класс для стилизации таблицы -->
+            <thead class="thead-light" > <!-- Добавлен класс для стилизации заголовка таблицы -->
                 <tr>
                     <th>Recipient</th>
                     <th>Amount</th>
