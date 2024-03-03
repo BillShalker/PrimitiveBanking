@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import CreateAccountForm, LoginForm, PaymentForm
 from django.db import transaction, connection
 from .models import Account, User, Transaction
+from .conversion_rates import currency_rates
 
 
 def home(request):
@@ -74,7 +75,7 @@ def cabinet(request):
     transactions = Transaction.objects.filter(from_account=account).all()[::-1]
     # Передаем информацию об аккаунте в контекст шаблона
     return render(request, 'banking/cabinet.html',
-                  {'auth_user': auth_user, 'account': account, 'transactions': transactions})
+                  {'auth_user': auth_user, 'account': account, 'transactions': transactions, 'currency_rates': currency_rates})
 
 
 @transaction.atomic
