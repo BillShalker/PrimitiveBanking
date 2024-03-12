@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CreateAccountForm, LoginForm, PaymentForm
 from django.db import transaction, connection
+from django.db.models import Q
 from .models import Account, User, Transaction
 from .conversion_rates import currency_rates
 
@@ -72,10 +73,11 @@ def cabinet(request):
         account = Account.objects.get(user=auth_user)
     except Account.DoesNotExist:
         account = None
-    transactions = Transaction.objects.filter(from_account=account).all()[::-1]
+    transactions = Transaction.objects.filter(Q(from_account=account) | Q(to_account=account)).order_by('-id')
     # Передаем информацию об аккаунте в контекст шаблона
     return render(request, 'banking/cabinet.html',
-                  {'auth_user': auth_user, 'account': account, 'transactions': transactions, 'currency_rates': currency_rates})
+                  {'auth_user': auth_user, 'account': account, 'transactions': transactions,
+                   'currency_rates': currency_rates})
 
 
 @transaction.atomic

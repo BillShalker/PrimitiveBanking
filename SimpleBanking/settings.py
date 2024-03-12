@@ -126,7 +126,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-SESSION_COOKIE_AGE = 0
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
