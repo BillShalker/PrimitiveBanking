@@ -11,7 +11,7 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card" style="background-color: rgba(255, 255, 255, 0.5);">
-                <div class="card-header" >Login</div>
+                <div class="card-header">Login</div>
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
@@ -36,6 +36,7 @@
             <div class="card" style="background-color: rgba(255, 255, 255, 0.5);">
                 <div class="card-body" style="text-align: center">
                     <p>If you don't have an account, <a href="{% url 'create_account' %}">click here</a> to create one.
+                    <p>Forgot password? <a href="{% url 'password_reset' %}">click here</a>.
                     </p>
                 </div>
             </div>
