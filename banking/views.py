@@ -34,7 +34,7 @@ class UserPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView
     Представление установки нового пароля
     """
     form_class = UserSetNewPasswordForm
-    template_name = 'system/user_password_set_new.html'
+    template_name = 'banking/user_password_set_new.html'
     success_url = reverse_lazy('home')
     success_message = 'Пароль успешно изменен. Можете авторизоваться на сайте.'
 
